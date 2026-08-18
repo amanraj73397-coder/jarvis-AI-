@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS AI</title>
+</head>
+<body>
+    <h1>🤖 JARVIS AI</h1>
+
+    <p>Welcome! You are logged in.</p>
+
+    <input id="message" type="text" placeholder="Type your message">
+    <button onclick="sendMessage()">Send</button>
+
+    <p id="reply"></p>
+
+    <script>
+        async function sendMessage() {
+            const message = document.getElementById("message").value;
+
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("reply").textContent = data.reply;
+        }
+    </script>
+</body>
+</html>
