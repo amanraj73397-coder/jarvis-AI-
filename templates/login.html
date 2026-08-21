@@ -4,41 +4,188 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JARVIS AI - Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0b0f14;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-box {
+            width: 90%;
+            max-width: 420px;
+            padding: 35px;
+            background: #151b23;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9aa4b2;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #303945;
+            border-radius: 10px;
+            background: #0f141b;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .signup {
+            text-align: center;
+            margin-top: 20px;
+            color: #9aa4b2;
+        }
+
+        .signup a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+    </style>
 </head>
+
 <body>
+
+<div class="login-box">
+
     <h1>🤖 JARVIS AI</h1>
 
-    <input id="name" type="text" placeholder="Enter your name">
-    <br><br>
+    <div class="subtitle">
+        Login to continue
+    </div>
 
-    <input id="password" type="password" placeholder="Enter password">
-    <br><br>
+    <form id="loginForm">
 
-    <button onclick="login()">Login</button>
+        <input
+            type="email"
+            id="email"
+            placeholder="Email"
+            required
+        >
 
-    <p id="message"></p>
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+        >
 
-    <script>
-        async function login() {
-            const name = document.getElementById("name").value;
-            const password = document.getElementById("password").value;
+        <button type="submit">
+            Login
+        </button>
 
-            const response = await fetch("/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ name, password })
-            });
+    </form>
 
-            const data = await response.json();
+    <div id="message"></div>
 
-            if (data.success) {
-                window.location.href = "/";
-            } else {
-                document.getElementById("message").textContent = data.message;
+    <div class="signup">
+        Don't have an account?
+        <a href="/signup">Create account</a>
+    </div>
+
+</div>
+
+<script>
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+            message.textContent = "Logging in...";
+
+            try {
+
+                const response = await fetch("/login", {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+
+                    message.textContent =
+                        "Login successful!";
+
+                    window.location.href = "/";
+
+                } else {
+
+                    message.textContent =
+                        data.message || "Login failed.";
+
+                }
+
+            } catch (error) {
+
+                message.textContent =
+                    "Server se connection nahi ho paya.";
+
             }
-        }
-    </script>
+
+        });
+</script>
+
 </body>
 </html>
