@@ -13,150 +13,256 @@
 
         body {
             margin: 0;
-            background: #212121;
+            height: 100vh;
+            background: #0b0f14;
             color: white;
             font-family: Arial, sans-serif;
-            height: 100vh;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .header {
+        /* HEADER */
+
+        header {
             height: 60px;
             display: flex;
             align-items: center;
-            padding: 0 24px;
-            border-bottom: 1px solid #444;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid #252c35;
+            background: #11161d;
+        }
+
+        .logo {
             font-size: 20px;
             font-weight: bold;
         }
 
-        .chat {
-            height: calc(100vh - 145px);
+        .logout {
+            background: #252c35;
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* CHAT */
+
+        #chat {
+            flex: 1;
             overflow-y: auto;
-            padding: 25px 20px 100px;
+            padding: 25px 15px 150px;
         }
 
         .message {
             max-width: 800px;
             margin: 0 auto 18px;
-            padding: 15px 18px;
-            border-radius: 14px;
+            padding: 14px 17px;
+            border-radius: 15px;
             line-height: 1.5;
             white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .jarvis {
-            background: #2f2f2f;
         }
 
         .user {
-            background: #343541;
+            background: #2563eb;
+            margin-right: max(0px, calc((100% - 800px) / 2));
+            margin-left: auto;
         }
+
+        .jarvis {
+            background: #171d25;
+            margin-left: max(0px, calc((100% - 800px) / 2));
+        }
+
+        .message a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* INPUT AREA */
 
         .input-area {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 12px 20px 20px;
-            background: #212121;
+            padding: 15px;
+            background: linear-gradient(
+                transparent,
+                #0b0f14 25%
+            );
         }
 
         .input-box {
             max-width: 800px;
             margin: auto;
             display: flex;
-            align-items: flex-end;
             gap: 10px;
-            background: #2f2f2f;
-            border: 1px solid #555;
-            border-radius: 18px;
-            padding: 8px 10px;
+            background: #171d25;
+            border: 1px solid #303945;
+            border-radius: 16px;
+            padding: 8px;
         }
 
-        textarea {
+        #messageInput {
             flex: 1;
             resize: none;
+            min-height: 48px;
+            max-height: 150px;
+            padding: 13px;
             border: none;
             outline: none;
             background: transparent;
             color: white;
             font-size: 16px;
-            padding: 12px;
-            min-height: 48px;
-            max-height: 150px;
         }
 
-        textarea::placeholder {
-            color: #aaa;
-        }
-
-        button {
+        #sendButton {
+            width: 50px;
+            height: 48px;
             border: none;
             border-radius: 12px;
-            background: white;
-            color: black;
-            padding: 11px 17px;
-            font-size: 16px;
+            background: #2563eb;
+            color: white;
+            font-size: 20px;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #ddd;
+        #sendButton:disabled {
+            opacity: 0.5;
         }
 
-        .typing {
-            color: #aaa;
-            font-style: italic;
+        /* WELCOME */
+
+        .welcome {
+            text-align: center;
+            max-width: 700px;
+            margin: 80px auto;
+            color: #aeb7c4;
+        }
+
+        .welcome h1 {
+            color: white;
+            font-size: 32px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 0 12px;
+            }
+
+            #chat {
+                padding: 15px 10px 130px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .input-area {
+                padding: 8px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="header">
-    🤖 JARVIS AI
-</div>
+<header>
 
-<div class="chat" id="chat">
-
-    <div class="message jarvis">
-        Hello! 👋 Main Jarvis hoon. Kaise help karun?
+    <div class="logo">
+        🤖 JARVIS AI
     </div>
 
-</div>
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</header>
+
+
+<main id="chat">
+
+    <div class="welcome" id="welcome">
+
+        <h1>How can I help you?</h1>
+
+        <p>
+            Mujhse normal Hinglish mein bhi baat kar sakte ho. 🙂
+        </p>
+
+    </div>
+
+</main>
+
 
 <div class="input-area">
 
     <div class="input-box">
 
         <textarea
-            id="message"
+            id="messageInput"
             placeholder="Message JARVIS..."
             rows="1"
         ></textarea>
 
-        <button onclick="sendMessage()">➤</button>
+        <button id="sendButton">
+            ↑
+        </button>
 
     </div>
 
 </div>
 
+
 <script>
 
-const input = document.getElementById("message");
+const input = document.getElementById("messageInput");
+const sendButton = document.getElementById("sendButton");
 const chat = document.getElementById("chat");
+const welcome = document.getElementById("welcome");
 
-input.addEventListener("keydown", function(event) {
 
-    if (event.key === "Enter" && !event.shiftKey) {
+function addMessage(text, type) {
 
-        event.preventDefault();
-
-        sendMessage();
+    if (welcome) {
+        welcome.remove();
     }
-});
+
+    const message = document.createElement("div");
+
+    message.className = "message " + type;
+
+    if (
+        typeof text === "object"
+        && text.type === "link"
+    ) {
+
+        const link = document.createElement("a");
+
+        link.href = text.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        link.textContent = text.text;
+
+        message.appendChild(link);
+
+    } else {
+
+        message.textContent = text;
+
+    }
+
+    chat.appendChild(message);
+
+    chat.scrollTop = chat.scrollHeight;
+}
 
 
 async function sendMessage() {
@@ -167,29 +273,11 @@ async function sendMessage() {
         return;
     }
 
-    const userMessage = document.createElement("div");
-
-    userMessage.className = "message user";
-
-    userMessage.textContent = message;
-
-    chat.appendChild(userMessage);
+    addMessage(message, "user");
 
     input.value = "";
 
-    chat.scrollTop = chat.scrollHeight;
-
-
-    const typing = document.createElement("div");
-
-    typing.className = "message jarvis typing";
-
-    typing.textContent = "JARVIS is thinking...";
-
-    chat.appendChild(typing);
-
-    chat.scrollTop = chat.scrollHeight;
-
+    sendButton.disabled = true;
 
     try {
 
@@ -210,22 +298,80 @@ async function sendMessage() {
 
         const data = await response.json();
 
-        typing.classList.remove("typing");
 
-        typing.textContent = data.reply;
+        if (response.status === 401) {
+
+            window.location.href = "/";
+
+            return;
+        }
+
+
+        addMessage(
+            data.reply || "JARVIS ko response nahi mila.",
+            "jarvis"
+        );
 
 
     } catch (error) {
 
-        typing.classList.remove("typing");
+        addMessage(
+            "Server se connection nahi ho paya. 😕",
+            "jarvis"
+        );
 
-        typing.textContent =
-            "Sorry, connection mein problem aa gayi. 😕";
+    } finally {
+
+        sendButton.disabled = false;
+
+        input.focus();
 
     }
-
-    chat.scrollTop = chat.scrollHeight;
 }
+
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+input.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+            && !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+async function logout() {
+
+    try {
+
+        await fetch("/logout");
+
+        window.location.href = "/";
+
+    } catch (error) {
+
+        window.location.href = "/";
+
+    }
+}
+
+
+input.focus();
 
 </script>
 
